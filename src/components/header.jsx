@@ -1,12 +1,13 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom';
-
+import { useEmployeeContext } from '../updateEmployeeContext';
 const Header = () => {
-
+  const {updateemployees, setUpdateEmployees} = useEmployeeContext();
 const navigate = useNavigate();
 const handlelogout=()=>{
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    setUpdateEmployees([]);
     navigate('/');
 }
 

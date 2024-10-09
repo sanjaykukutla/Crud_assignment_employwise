@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Header from '../components/header';
 import axios from 'axios';
 import SearchBar from '../components/searchbar';
+import { useEmployeeContext } from '../updateEmployeeContext';
 import '../index.css'
 
 const EmployeeCard = lazy(() => import('../components/employeeCard'));
@@ -10,28 +11,54 @@ const EmployeeCard = lazy(() => import('../components/employeeCard'));
 const EmployeeListPagee = () => {
   const navigate = useNavigate();
   const [employees, setEmployees] = useState([]);
+  const {updateemployees} = useEmployeeContext();
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true); 
 
   useEffect(() => {
-    fetchData(currentPage);
-  }, [currentPage]);
-
-  const fetchData = async (page) => {
     setLoading(true); 
-    const response = await fetch(`https://reqres.in/api/users?page=${page}`, {
-      headers: {
-        authorization: localStorage.getItem('token'),
-      },
+
+    fetch(`https://reqres.in/api/users?page=${currentPage}`, {
+        headers: {
+            authorization: localStorage.getItem('token'),
+        },
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        //console.log(data.data);
+
+        const updatesLookup = Object.fromEntries(updateemployees.map(emp => [emp.id, emp]));
+
+        const updatedEmployees = data.data.map(emp => {
+            const updatedEmp = updatesLookup[emp.id];
+            console.log(updatedEmp);
+
+            return updatedEmp ? { 
+                ...emp, 
+                email: updatedEmp.email, 
+                last_name: updatedEmp.last_name, 
+                first_name: updatedEmp.first_name 
+            } : emp;
+        });
+
+        setEmployees(updatedEmployees); 
+        setTotalPages(data.total_pages);
+    })
+    .catch(error => {
+        console.error("Error fetching data:", error);
+    })
+    .finally(() => {
+        setLoading(false); 
     });
-    const data = await response.json();
-    setEmployees(data.data);
-    //console.log(data.data);
-    setTotalPages(data.total_pages); 
-    setLoading(false);
-  };
+}, [currentPage, updateemployees]);
+
 
   const handleSearch = (e) => {
     const term = e.target.value.toLowerCase();
@@ -43,8 +70,8 @@ const EmployeeListPagee = () => {
   };
 
   const filteredEmployees = employees.filter(employee =>
-    employee.first_name.toLowerCase().includes(searchTerm) ||
-    employee.last_name.toLowerCase().includes(searchTerm)
+    employee?.first_name.toLowerCase().includes(searchTerm) ||
+    employee?.last_name.toLowerCase().includes(searchTerm)
   );
 
   const handleEdit = (employee) => {

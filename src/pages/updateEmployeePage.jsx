@@ -3,7 +3,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import Header from '../components/header';
 import ReusableForm from '../components/ReusableForm';
-
+import { useEmployeeContext } from '../updateEmployeeContext';
  const UpdateEmployeePage = () => {
     const navigate = useNavigate();
     const { employee } = useLocation().state || {};
@@ -12,6 +12,7 @@ import ReusableForm from '../components/ReusableForm';
     const [firstname, setFirstname] = useState(employee.first_name);
     const [lastname, setLastname] = useState(employee.last_name);
     const [email, setEmail] = useState(employee.email);
+    const {updateemployees, setUpdateEmployees} = useEmployeeContext();
 
     const createEmployee = async (e) => {
         e.preventDefault();
@@ -47,8 +48,33 @@ import ReusableForm from '../components/ReusableForm';
                     },
                 }
             );
-            console.log(response);
-            navigate('/home');
+            if (response.status === 200) {
+                const { first_name, last_name, email } = response.data;
+        
+                const updatedEmployee = {
+                    id, 
+                    first_name: response.data.first_name,
+                    last_name: response.data.last_name,
+                    email: response.data.email,
+                };
+
+                setUpdateEmployees(prevEmployees => {
+                    const existingEmployeeIndex = prevEmployees.findIndex(emp => emp.id == id);
+                    
+                    if (existingEmployeeIndex > -1) {
+                        // Employee exists, update it
+                        const updatedEmployees = [...prevEmployees];
+                        updatedEmployees[existingEmployeeIndex] = updatedEmployee;
+                        return updatedEmployees;
+                    } else {
+                        // Employee does not exist, add it
+                        return [...prevEmployees, updatedEmployee];
+                    }
+                });
+                navigate('/home');
+            } else {
+                alert('Update failed: ' + response.statusText);
+            }
         } catch (error) {
             alert(error.response.data);
         }
