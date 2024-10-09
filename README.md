@@ -17,41 +17,37 @@ Make sure you have Node.js and npm installed on your machine. You can download i
    ```bash
    git clone <repository-url>
    cd <repository-directory>
-Install the required dependencies:
+   ```
 
-bash
-Copy code
+2.**Install the required dependencies:**
+
+```bash
 npm install
-Running the Application
+```
+
+3.**Running the Application**
 To start the application in development mode, run:
 
-bash
-Copy code
+```bash
 npm start
+```
+
 This will start the server, and you can view the app in your browser at http://localhost:3000. The page will automatically reload when you make changes.
 
 Features
 Update Users: Modify user information directly from the admin panel.
 Delete Users: Remove user accounts as needed.
-Testing
-To run the test suite, use:
 
-bash
-Copy code
-npm test
-This command launches the test runner in interactive watch mode.
 
-Building for Production
+4.**Building for Production**
 To build the application for production, run:
 
-bash
-Copy code
+```bash
 npm run build
+```
 This command will bundle the app for production, optimizing for performance.
-
-Deployment
-For detailed deployment instructions, refer to the Create React App deployment documentation.
 
 Learn More
 To learn more about React, visit the React documentation. For advanced configuration and features of Create React App, check out the Create React App documentation.
 
+```
