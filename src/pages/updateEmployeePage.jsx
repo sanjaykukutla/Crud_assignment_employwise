@@ -22,14 +22,30 @@ import { useEmployeeContext } from '../updateEmployeeContext';
             alert('Please fill all the fields');
             return;
         }
-        if (firstname.length < 1 || firstname.length > 20) {
-            alert('First name must be between 1 and 20 characters');
-            return;
+        const namePattern = /^[a-zA-Z][a-zA-Z\s-]*$/; // Pattern: starts with a letter, can contain letters, spaces, or hyphens
+
+        // Check first name length
+        if (firstname.length < 3 || firstname.length > 20) {
+            alert('First name must be between 3 and 20 characters');
+            return ;
         }
     
-        if (lastname.length < 1 || lastname.length > 20) {
-            alert('Last name must be between 1 and 20 characters');
-            return;
+        // Check last name length
+        if (lastname.length < 3 || lastname.length > 20) {
+            alert('Last name must be between 3 and 20 characters');
+            return ;
+        }
+    
+        // Check if first name starts with a letter and contains valid characters
+        if (!namePattern.test(firstname)) {
+            alert('First name must start with a letter and can only contain letters, spaces, or hyphens');
+            return ;
+        }
+    
+        // Check if last name starts with a letter and contains valid characters
+        if (!namePattern.test(lastname)) {
+            alert('Last name must start with a letter and can only contain letters, spaces, or hyphens');
+            return ;
         }
         // Validate email format
         if (!email.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)) {

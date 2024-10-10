@@ -25,10 +25,12 @@ const LoginPage = () => {
   }
 
   // Validate password length
-  if (password.length < 6) {
-      alert('Password must be at least 6 characters long');
-      return;
-  }
+  const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
+
+    if (!passwordPattern.test(password)) {
+        alert('Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, and one number.');
+        return ; // Invalid password
+    }
 
     try {
       const response = await axios.post("https://reqres.in/api/login", {
